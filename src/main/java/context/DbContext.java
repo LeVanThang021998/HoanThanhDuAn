@@ -28,4 +28,8 @@ public class DbContext {
     {
         System.out.println("Ket Qua ket noi:" + DbContext.getConnection());
     }
+
+    public static Connection getCoonnection() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
