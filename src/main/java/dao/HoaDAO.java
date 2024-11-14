@@ -22,7 +22,8 @@ public class HoaDAO {
 
     public ArrayList<Hoa> getTop10() {
         ArrayList<Hoa> ds = new ArrayList<>();
-        String sql = "select top 10 * from Hoa order by gia desc";
+        String sql = "select top 10 * from Hoa order by gia asc";// home
+        // desc + khơi chạy lại test
         conn = DbContext.getConnection();
         try {
             ps = conn.prepareStatement(sql);
@@ -39,7 +40,9 @@ public class HoaDAO {
     //Phương thức đọc hoa theo thể loại
     public ArrayList<Hoa> getByCategoryId(int maloai) {
         ArrayList<Hoa> ds = new ArrayList<>();
-        String sql = "select * from Hoa where maloai=?";
+        
+       String sql = "select * from Hoa where maloai=? order by gia asc"; // product
+        
         conn = DbContext.getConnection();
         try {
             ps = conn.prepareStatement(sql);
@@ -53,16 +56,34 @@ public class HoaDAO {
         }
         return ds;
     }
-    //Phương thức đọc hoa theo thể loại
-    public ArrayList<Hoa> getByPage(int pageIndex, int pageSize) {
+
+    //Phương thức đọc tất cả sản phẩm (Hoa) từ CSDL
+    public ArrayList<Hoa> getAll() {
+        ArrayList<Hoa> ds = new ArrayList<>();
+        String sql = "select * from Hoa ";
+    
+        conn = DbContext.getConnection();
+        try {
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                ds.add(new Hoa(rs.getInt(1), rs.getString(2), rs.getDouble(3), rs.getString(4), rs.getInt(5), rs.getDate(6)));
+            }
+        } catch (Exception ex) {
+            System.out.println("Loi:" + ex.toString());
+        }
+        return ds;
+    }
+    public ArrayList<Hoa> getByPage(int pageIndex,int pageSize ) {
         ArrayList<Hoa> ds = new ArrayList<>();
         String sql = "select * from Hoa order by mahoa offset ? rows fetch next ? rows only";
         conn = DbContext.getConnection();
         try {
             ps = conn.prepareStatement(sql);
-            ps.setInt(1, (pageIndex-1)*pageSize);
-            ps.setInt(2,pageSize);
-            rs = ps.executeQuery();
+            
+            ps.setInt(1,(pageIndex-1)*pageSize);
+             ps.setInt(2,pageSize);
+             rs = ps.executeQuery();
             while (rs.next()) {
                 ds.add(new Hoa(rs.getInt(1), rs.getString(2), rs.getDouble(3), rs.getString(4), rs.getInt(5), rs.getDate(6)));
             }
@@ -71,24 +92,6 @@ public class HoaDAO {
         }
         return ds;
     }
-
-    //Phương thức đọc tất cả sản phẩm (Hoa) từ CSDL
-    public ArrayList<Hoa> getAll() {
-        ArrayList<Hoa> ds = new ArrayList<>();
-        String sql = "select * from Hoa";
-        conn = DbContext.getConnection();
-        try {
-            ps = conn.prepareStatement(sql);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                ds.add(new Hoa(rs.getInt(1), rs.getString(2), rs.getDouble(3), rs.getString(4), rs.getInt(5), rs.getDate(6)));
-            }
-        } catch (Exception ex) {
-            System.out.println("Loi:" + ex.toString());
-        }
-        return ds;
-    }
-    
 
     //Phương thức them mới sản phẩm (Hoa)
     public boolean Insert(Hoa hoa) {
@@ -113,7 +116,8 @@ public class HoaDAO {
 
     //Phương thức cập nhật sản phẩm (Hoa)
     public boolean Update(Hoa hoa) {
-        String sql = "update hoa set tenhoa=?,gia=?,hinh=?,maloai=?,ngaycapnhat=? where mahoa=?";
+
+        String sql = "update hoa set tenhoa=?,gia=?,hinh=?,maloai=?,ngaycapnhat=? where mahoa=? " ;
         conn = DbContext.getConnection();
         try {
             ps = conn.prepareStatement(sql);
@@ -153,7 +157,7 @@ public class HoaDAO {
     //Phương thức lấy thông tin sản phẩm (Hoa) theo mã hoa 
     public Hoa getById(int mahoa) {
         Hoa kq = null;
-        String sql = "select * from Hoa where mahoa=?";
+        String sql = "select * from Hoa where mahoa=? ";
         conn = DbContext.getConnection();
         try {
             ps = conn.prepareStatement(sql);
@@ -170,9 +174,9 @@ public class HoaDAO {
 
     public static void main(String[] args) {
         HoaDAO hoaDao = new HoaDAO();
-        int pageSize=5;
-        System.out.println("Lay san pham page 1");
-        ArrayList<Hoa> dsHoa = hoaDao.getByPage(1,pageSize);
+        int pageSize =5;
+        System.out.println("Sppage");
+        ArrayList<Hoa> dsHoa = hoaDao.getByPage(2, pageSize);
         for (Hoa hoa : dsHoa) {
             System.out.println(hoa);
         }

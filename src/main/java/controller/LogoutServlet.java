@@ -15,9 +15,9 @@ import javax.servlet.http.HttpSession;
 
 /**
  *
- * @author ADMIN
+ * @author trant
  */
-@WebServlet(name = "LogoutServlet", urlPatterns = {"/LogoutServlet"})
+@WebServlet(name = "DangxuatServlet", urlPatterns = {"/DangxuatServlet"})
 public class LogoutServlet extends HttpServlet {
 
     /**
@@ -29,16 +29,21 @@ public class LogoutServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession();
-        if (session.getAttribute("username") != null) {
-        //xoá biến username trong session của người dùng
+        response.setContentType("text/html;charset=UTF-8");
+        
+        HttpSession session  = request.getSession();
+        if(session.getAttribute("username")!=null){
+            //hủy bỏ thông tin lịch sử đăng nhập
             session.removeAttribute("username");
-        //chuyển hướng người dùng về trang mặc định
-            response.sendRedirect("home.jsp");
-
+        }
+        
+        //điều hướng về trang mặc định
+        response.sendRedirect("home.jsp");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            
         }
     }
 

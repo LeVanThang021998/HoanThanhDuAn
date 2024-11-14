@@ -15,6 +15,7 @@ public class TaiKhoan {
     public TaiKhoan() {
     }
 
+
     public TaiKhoan(String tendangnhap, String matkhau) {
         this.tendangnhap = tendangnhap;
         this.matkhau = matkhau;

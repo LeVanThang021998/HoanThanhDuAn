@@ -17,9 +17,9 @@ import model.TaiKhoan;
 
 /**
  *
- * @author ADMIN
+ * @author trant
  */
-@WebServlet(urlPatterns = {"/LoginServlet"})
+@WebServlet(name = "DangnhapServlet", urlPatterns = {"/DangnhapServlet"})
 public class LoginServlet extends HttpServlet {
 
     /**
@@ -34,30 +34,29 @@ public class LoginServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        //b1. Lấy thông tin username - password
+        // b1 thông tin đăng nhập và mk
+         //b1. lấy thông tin username - password
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         
-        //B2.Xác thực thông tin 
+        
         TaiKhoanDAO tkDAO = new TaiKhoanDAO();
-        TaiKhoan tk= tkDAO.checkLogin(username, password);
-        if(tk!=null)//Thành công
-        {
-            //lưu thông tin lịch sử (tài khoản xác thực thành công) vào session của người dùng)
+        TaiKhoan tk = tkDAO.checkLogin(username, password);
+        //b2. Xác thực thông tin
+        if(tk!=null){//thành công
+       //(tài khoản xác thực thành công vào session của người dùng
             HttpSession session = request.getSession();
-            session.setAttribute("username", username);
-            //Điều hướng tới trang mặc định (home.jsp)
+            session.setAttribute("username", username);         
+            //điều hướng tới trang mặc định
             response.sendRedirect("home.jsp");
-        }else //Thất bại
-        {
-            request.setAttribute("error","Đăng nhập thất bại.(do sai tên hoặc mật khẩu)");
-            //Chuyển tiếp về trang login
+        }else{//thất bại
+            request.setAttribute("error", "Đăng nhập thất bại. (Do sai tên hoặc mật khẩu)");
+            //chuyển tiếp đến trang login
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }
-        try(PrintWriter out = response.getWriter()){
-            /*TODO output your page here. You may use following sample code.*/
-        }
+      
     }
+        
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

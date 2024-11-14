@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Comparator;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -21,9 +23,9 @@ import model.Hoa;
 
 /**
  *
- * @author PC
+ * @author trant
  */
-@WebServlet(name = "ManagerProduct", urlPatterns = {"/ManagerProduct"})
+@WebServlet(name = "TestServlet", urlPatterns = {"/TestServlet"})
 @MultipartConfig
 public class ManagerProduct extends HttpServlet {
 
@@ -38,64 +40,62 @@ public class ManagerProduct extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
 
         HoaDAO hoaDAO = new HoaDAO();
         LoaiDAO loaiDAO = new LoaiDAO();
 
-        String method = request.getMethod();
-
         String action = "LIST";
         if (request.getParameter("action") != null) {
             action = request.getParameter("action");
         }
+        String method = request.getMethod();
         switch (action) {
             case "LIST":
-                //Tra ve giao dien liet ke danh sach san pham quan tri
-                int pageSize=5;
-                int pageIndex=1;
-                if(request.getParameter("page")!=null)
-                {
-                    pageIndex=Integer.parseInt(request.getParameter("page"));
+                int pageSize = 5;
+                int pageIndex = 1;
+                if (request.getParameter("page") != null) {
+                    pageIndex = Integer.parseInt(request.getParameter("page"));
                 }
-                int sumOfPage=(int)Math.ceil((double)hoaDAO.getAll().size()/pageSize);
-                request.setAttribute("dsHoa", hoaDAO.getByPage(pageIndex,pageSize));
-                request.setAttribute("sumOfPage",sumOfPage);
+                // làm tròn số trang 3,1 =4
+                int sumOfPage = (int) Math.ceil((double) hoaDAO.getAll().size() / pageSize);
+                request.setAttribute("sumOfPage", sumOfPage);
                 request.setAttribute("pageIndex", pageIndex);
+                request.setAttribute("dsHoa", hoaDAO.getByPage(pageIndex, pageSize));
                 request.getRequestDispatcher("admin/list_product.jsp").forward(request, response);
                 break;
             case "ADD":
-                if (method.equalsIgnoreCase("get")) {
-                    //tra ve gioa dien them moi san pham
+
+                if (method.equals("GET")) {
+
                     request.setAttribute("dsLoai", loaiDAO.getAll());
                     request.getRequestDispatcher("admin/add_product.jsp").forward(request, response);
-                } else {
-                    //xu ly them moi san pham
-                    //b1 Lay thong tin san pham
+                  
+                } else if (method.equals("POST")) {
+                    // xử lý thêm sản phẩm
+                    // b1 lấy thông tin sp cần thêm
                     String tenhoa = request.getParameter("tenhoa");
                     double gia = Double.parseDouble(request.getParameter("gia"));
                     Part part = request.getPart("hinh");
                     int maloai = Integer.parseInt(request.getParameter("maloai"));
-
-                    //b2 Xu ly upload file
-                    String realpath = request.getServletContext().getRealPath("/assets/images/products");
+                    // b2 xử lý úpload
+                    String realPath = request.getServletContext().getRealPath("/assets/images/products");
                     String filename = Paths.get(part.getSubmittedFileName()).getFileName().toString();
-                    part.write(realpath + "/" + filename);
-
-                    //3. Them san pham vao CSDL
+                    part.write(realPath + "/" + filename);
+                    //b3 thêm sp    
                     Hoa objInsert = new Hoa(0, tenhoa, gia, filename, maloai, new Date(new java.util.Date().getTime()));
                     if (hoaDAO.Insert(objInsert)) {
-                        //thong bao them thanh cong
-                        request.setAttribute("success", "Thao tac them san pham thanh cong");
+                        // thông báo thêm thành công
+                        request.setAttribute("success", " Thêm thành công");
                     } else {
-                        //thong bao them that bai
-                        request.setAttribute("orror", "Thao tac them san pham that bai");
+                        request.setAttribute("erorr", " Thêm thất bại");
                     }
-                    request.getRequestDispatcher("ManagerProduct?action=LIST").forward(request, response);
+                    request.getRequestDispatcher("TestServlet?action=LIST").forward(request, response);
                 }
+
                 break;
             case "EDIT":
-                //Tra ve giao dien cap nhat san pham
                 if (method.equalsIgnoreCase("get")) {
                     int mahoa = Integer.parseInt(request.getParameter("mahoa"));
                     request.setAttribute("hoa", hoaDAO.getById(mahoa));
@@ -106,6 +106,7 @@ public class ManagerProduct extends HttpServlet {
                     //b1 Lay thong tin san pham
                     int mahoa = Integer.parseInt(request.getParameter("mahoa"));
                     String tenhoa = request.getParameter("tenhoa");
+                   
                     double gia = Double.parseDouble(request.getParameter("gia"));
                     Part part = request.getPart("hinh");
                     int maloai = Integer.parseInt(request.getParameter("maloai"));
@@ -122,26 +123,24 @@ public class ManagerProduct extends HttpServlet {
                     Hoa objUpdate = new Hoa(mahoa, tenhoa, gia, filename, maloai, new Date(new java.util.Date().getTime()));
                     if (hoaDAO.Update(objUpdate)) {
                         //thong bao them thanh cong
-                        request.setAttribute("success", "Thao tac cap nhat san pham thanh cong");
+                        request.setAttribute("success", " Cập Nhật Sản Phẩm Thành Công ");
                     } else {
                         //thong bao them that bai
-                        request.setAttribute("error", "Thao tac cap nhat san pham that bai");
+                        request.setAttribute("error", " Cập Nhật Sản Phẩm Thất Bại ");
                     }
-                    request.getRequestDispatcher("ManagerProduct?action=LIST").forward(request, response);
+                    request.getRequestDispatcher("TestServlet?action=LIST").forward(request, response);
                 }
                 break;
             case "DELETE":
-                //Xu ly xoa san pham
-                //b1 Lay ma san pham
+                //  System.out.println("DELETE");
                 int mahoa = Integer.parseInt(request.getParameter("mahoa"));
-                //2. Xoa san pham khoi CSDL
                 if (hoaDAO.Delete(mahoa)) {
-                    request.setAttribute("success", "Thao tac xoa san pham thanh cong");
+                    // thông báo thêm thành công
+                    request.setAttribute("success", " Xóa Thành Công");
                 } else {
-                    //thong bao them that bai
-                    request.setAttribute("orror", "Thao tac xoa san pham that bai");
+                    request.setAttribute("erorr", " Xóa Thất Bại ");
                 }
-                request.getRequestDispatcher("ManagerProduct?action=LIST").forward(request, response);
+                request.getRequestDispatcher("TestServlet?action=LIST").forward(request, response);
                 break;
         }
     }
