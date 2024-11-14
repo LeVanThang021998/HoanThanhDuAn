@@ -1,9 +1,9 @@
-package controller;
-
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
+package controller;
+
 import dao.TaiKhoanDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -17,9 +17,9 @@ import model.TaiKhoan;
 
 /**
  *
- * @author trant
+ * @author DELL
  */
-@WebServlet(name = "DangnhapServlet", urlPatterns = {"/DangnhapServlet"})
+@WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
 public class LoginServlet extends HttpServlet {
 
     /**
@@ -34,31 +34,25 @@ public class LoginServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        // b1 thông tin đăng nhập và mk
-         //b1. lấy thông tin username - password
+        //B1. Lấy thông tin username và password
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        
-        
+        //B2. Xác thực thông tin
         TaiKhoanDAO tkDAO = new TaiKhoanDAO();
-        TaiKhoan tk = tkDAO.checkLogin(username, password);
-        //b2. Xác thực thông tin
-        if(tk!=null){//thành công
-       //(tài khoản xác thực thành công vào session của người dùng
+        TaiKhoan tk = tkDAO.checkLogIn(username, password);
+        if (tk!=null) {
+            //Lưu thông tin lịch sử
             HttpSession session = request.getSession();
-            session.setAttribute("username", username);         
-            //điều hướng tới trang mặc định
+            session.setAttribute("username", username);
+            //Điều hướng tới trang mặc định home.jsp
             response.sendRedirect("home.jsp");
-        }else{//thất bại
-            request.setAttribute("error", "Đăng nhập thất bại. (Do sai tên hoặc mật khẩu)");
-            //chuyển tiếp đến trang login
+        } else {
+            request.setAttribute("error", "Đăng nhập thất bại (Sai tên đăng nhập hoặc mật khẩu)");
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }
-      
     }
-        
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *

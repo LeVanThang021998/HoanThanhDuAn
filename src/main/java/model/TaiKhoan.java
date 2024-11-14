@@ -6,15 +6,15 @@ package model;
 
 /**
  *
- * @author ADMIN
+ * @author DELL
  */
 public class TaiKhoan {
     private String tendangnhap;
     private String matkhau;
-
-    public TaiKhoan() {
+    
+    public TaiKhoan(){
+        
     }
-
 
     public TaiKhoan(String tendangnhap, String matkhau) {
         this.tendangnhap = tendangnhap;
@@ -28,6 +28,7 @@ public class TaiKhoan {
     public void setTendangnhap(String tendangnhap) {
         this.tendangnhap = tendangnhap;
     }
+
     public String getMatkhau() {
         return matkhau;
     }
@@ -38,6 +39,8 @@ public class TaiKhoan {
 
     @Override
     public String toString() {
-        return "TaiKhoan{" + "tendangnhap=" + tendangnhap + ", matkhau=" + matkhau + '}';
-    } 
+        return "TaiKhoan(" + "tendangnhap=" + tendangnhap + ", matkhau=" + matkhau + ")";
+    }
+    
+    
 }

@@ -10,36 +10,48 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import model.TaiKhoan;
 
-
 /**
  *
- * @author trant
+ * @author DELL
  */
 public class TaiKhoanDAO {
+
     Connection conn;
     PreparedStatement ps;
     ResultSet rs;
-    // đặt tên database không được đặt là user hoặc User  hãy sử dụng tên khác plsss!!
-    
-    public TaiKhoan checkLogin (String username , String password){
+
+    public TaiKhoan checkLogIn(String username, String password) {
         TaiKhoan tk = null;
         conn = DbContext.getConnection();
         try {
-            ps=conn.prepareStatement("select * from users where username=? and password=?");
+            ps = conn.prepareStatement("select * from taikhoan where tendangnhap=? and matkhau=?");
             ps.setString(1, username);
             ps.setString(2, password);
-            rs=ps.executeQuery();
-            if (rs.next()) // có tồn tại 1 user
-            {
-                tk = new TaiKhoan(rs.getString(1),rs.getString(2));
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                tk = new TaiKhoan(rs.getString(1), rs.getString(2));
             }
         } catch (Exception ex) {
-            System.out.println("Loi :" + ex.toString());
+            System.out.println("Loi: " + ex.toString());
         }
-        
         return tk;
     }
-    // thay đổi mật khẩu 
-    //code
-    
+
+    public boolean changePassword(TaiKhoan tk) {
+        conn = DbContext.getConnection();
+        String sql = "update taikhoan set matkhau=? where tendangnhap=?";
+        try {
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, tk.getMatkhau());
+            ps.setString(2, tk.getTendangnhap());
+            int kq = ps.executeUpdate();
+            if (kq > 0) {
+                return true;
+            }
+        } catch (Exception ex) {
+            System.out.println("Loi: " + ex.toString());
+        }
+        return false;
+    }
 }

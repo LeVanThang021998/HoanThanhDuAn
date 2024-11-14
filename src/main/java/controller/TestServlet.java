@@ -10,8 +10,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Comparator;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -27,7 +25,7 @@ import model.Hoa;
  */
 @WebServlet(name = "TestServlet", urlPatterns = {"/TestServlet"})
 @MultipartConfig
-public class ManagerProduct extends HttpServlet {
+public class TestServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -53,25 +51,29 @@ public class ManagerProduct extends HttpServlet {
         String method = request.getMethod();
         switch (action) {
             case "LIST":
-                int pageSize = 5;
-                int pageIndex = 1;
-                if (request.getParameter("page") != null) {
-                    pageIndex = Integer.parseInt(request.getParameter("page"));
+                int pageSize =5;
+                int pageIndex =1;
+                if (request.getParameter("page")!=null) {
+                    pageIndex= Integer.parseInt(request.getParameter("page"));
                 }
                 // làm tròn số trang 3,1 =4
-                int sumOfPage = (int) Math.ceil((double) hoaDAO.getAll().size() / pageSize);
-                request.setAttribute("sumOfPage", sumOfPage);
-                request.setAttribute("pageIndex", pageIndex);
+                int sumOfPage =(int) Math.ceil((double) hoaDAO.getAll().size()/pageSize);
+                
+                request.setAttribute("sumOfPage", sumOfPage);              
+                 request.setAttribute("pageIndex", pageIndex); 
+                 
+                 
                 request.setAttribute("dsHoa", hoaDAO.getByPage(pageIndex, pageSize));
                 request.getRequestDispatcher("admin/list_product.jsp").forward(request, response);
                 break;
             case "ADD":
 
+               
                 if (method.equals("GET")) {
 
                     request.setAttribute("dsLoai", loaiDAO.getAll());
                     request.getRequestDispatcher("admin/add_product.jsp").forward(request, response);
-                  
+
                 } else if (method.equals("POST")) {
                     // xử lý thêm sản phẩm
                     // b1 lấy thông tin sp cần thêm
@@ -87,9 +89,9 @@ public class ManagerProduct extends HttpServlet {
                     Hoa objInsert = new Hoa(0, tenhoa, gia, filename, maloai, new Date(new java.util.Date().getTime()));
                     if (hoaDAO.Insert(objInsert)) {
                         // thông báo thêm thành công
-                        request.setAttribute("success", " Thêm thành công");
+                        request.setAttribute("success", " thao tác thêm thành công");
                     } else {
-                        request.setAttribute("erorr", " Thêm thất bại");
+                        request.setAttribute("erorr", "thao tác thêm thất bại");
                     }
                     request.getRequestDispatcher("TestServlet?action=LIST").forward(request, response);
                 }
@@ -106,7 +108,6 @@ public class ManagerProduct extends HttpServlet {
                     //b1 Lay thong tin san pham
                     int mahoa = Integer.parseInt(request.getParameter("mahoa"));
                     String tenhoa = request.getParameter("tenhoa");
-                   
                     double gia = Double.parseDouble(request.getParameter("gia"));
                     Part part = request.getPart("hinh");
                     int maloai = Integer.parseInt(request.getParameter("maloai"));
@@ -123,10 +124,10 @@ public class ManagerProduct extends HttpServlet {
                     Hoa objUpdate = new Hoa(mahoa, tenhoa, gia, filename, maloai, new Date(new java.util.Date().getTime()));
                     if (hoaDAO.Update(objUpdate)) {
                         //thong bao them thanh cong
-                        request.setAttribute("success", " Cập Nhật Sản Phẩm Thành Công ");
+                        request.setAttribute("success", "Thao tac cap nhat san pham thanh cong");
                     } else {
                         //thong bao them that bai
-                        request.setAttribute("error", " Cập Nhật Sản Phẩm Thất Bại ");
+                        request.setAttribute("error", "Thao tac cap nhat san pham that bai");
                     }
                     request.getRequestDispatcher("TestServlet?action=LIST").forward(request, response);
                 }
@@ -136,15 +137,16 @@ public class ManagerProduct extends HttpServlet {
                 int mahoa = Integer.parseInt(request.getParameter("mahoa"));
                 if (hoaDAO.Delete(mahoa)) {
                     // thông báo thêm thành công
-                    request.setAttribute("success", " Xóa Thành Công");
+                    request.setAttribute("success", " thao tác thêm thành công");
                 } else {
-                    request.setAttribute("erorr", " Xóa Thất Bại ");
+                    request.setAttribute("erorr", "thao tác thêm thất bại");
                 }
                 request.getRequestDispatcher("TestServlet?action=LIST").forward(request, response);
                 break;
         }
     }
-   // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
