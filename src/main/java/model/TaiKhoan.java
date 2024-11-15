@@ -41,6 +41,5 @@ public class TaiKhoan {
     public String toString() {
         return "TaiKhoan(" + "tendangnhap=" + tendangnhap + ", matkhau=" + matkhau + ")";
     }
-    
-    
+       
 }
